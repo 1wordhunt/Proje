@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İngilizce Kelime Projesi</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --accent: #4a90e2;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .header-info {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .header-info div {
+            font-size: 1.1em;
+            color: var(--text);
+        }
+
+        .header-info b { color: var(--accent); }
+
+        h2 { text-align: center; color: var(--accent); }
+
+        /* Animasyon Alanı */
+        #word-container {
+            min-height: 400px;
+            transition: all 0.4s ease-in-out;
+        }
+
+        .fade-in {
+            animation: slideIn 0.5s forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .en-word { font-weight: bold; color: var(--accent); font-size: 1.1em; }
+        .tr-word { color: #666; font-style: italic; }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        button:hover:not(:disabled) { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-info">
+        <div><b>Öğrenci:</b> Harun Sürücü</div>
+        <div><b>Numara:</b> [Buraya Numaranı Yaz]</div>
+        <div><b>Ders:</b> İngilizce</div>
+        <div><b>Öğretmen:</b> Emel Bozbay</div>
+    </div>
+
+    <h2>Kelime Listesi</h2>
+
+    <div id="word-container">
+        <table id="word-table">
+            <tbody id="word-list">
+                </tbody>
+        </table>
+    </div>
+
+    <div class="controls">
+        <button id="prevBtn" onclick="changePage(-1)">Geri</button>
+        <span id="pageInfo">Sayfa 1</span>
+        <button id="nextBtn" onclick="changePage(1)">İleri</button>
+    </div>
+</div>
+
+<script>
+    // A'dan Z'ye sıralı örnek kelime listesi (Burayı genişletebilirsin)
+    const words = [
+        {en: "Apple", tr: "Elma"}, {en: "Ability", tr: "Yetenek"}, {en: "Account", tr: "Hesap"},
+        {en: "Active", tr: "Aktif"}, {en: "Address", tr: "Adres"}, {en: "Advice", tr: "Tavsiye"},
+        {en: "Age", tr: "Yaş"}, {en: "Agree", tr: "Anlaşmak"}, {en: "Air", tr: "Hava"}, {en: "Alone", tr: "Yalnız"},
+        {en: "Baby", tr: "Bebek"}, {en: "Back", tr: "Geri"}, {en: "Bad", tr: "Kötü"}, {en: "Ball", tr: "Top"},
+        {en: "Bank", tr: "Banka"}, {en: "Basic", tr: "Temel"}, {en: "Beach", tr: "Plaj"}, {en: "Bear", tr: "Ayı"},
+        {en: "Before", tr: "Önce"}, {en: "Best", tr: "En iyi"},
+        // ... Aradaki harfler ...
+        {en: "Young", tr: "Genç"}, {en: "Year", tr: "Yıl"}, {en: "Yellow", tr: "Sarı"}, {en: "Yes", tr: "Evet"},
+        {en: "Yesterday", tr: "Dün"}, {en: "You", tr: "Sen"}, {en: "Zero", tr: "Sıfır"}, {en: "Zone", tr: "Bölge"},
+        {en: "Zoo", tr: "Hayvanat Bahçesi"}, {en: "Zoom", tr: "Yakınlaştırmak"}
+    ];
+
+    let currentPage = 1;
+    const wordsPerPage = 10;
+
+    function renderWords() {
+        const list = document.getElementById('word-list');
+        const container = document.getElementById('word-container');
+        
+        // Animasyonu tetikle
+        container.classList.remove('fade-in');
+        void container.offsetWidth; // Reflow
+        container.classList.add('fade-in');
+
+        list.innerHTML = "";
+        
+        const start = (currentPage - 1) * wordsPerPage;
+        const end = start + wordsPerPage;
+        const currentWords = words.slice(start, end);
+
+        currentWords.forEach(w => {
+            list.innerHTML += `<tr><td class="en-word">${w.en}</td><td class="tr-word">${w.tr}</td></tr>`;
+        });
+
+        document.getElementById('pageInfo').innerText = `Sayfa ${currentPage} / ${Math.ceil(words.length / wordsPerPage)}`;
+        document.getElementById('prevBtn').disabled = currentPage === 1;
+        document.getElementById('nextBtn').disabled = end >= words.length;
+    }
+
+    function changePage(step) {
+        currentPage += step;
+        renderWords();
+        window.scrollTo(0, 0); // Sayfa değişince başa sarar
+    }
+
+    renderWords();
+</script>
+
+</body>
+</html>
+
