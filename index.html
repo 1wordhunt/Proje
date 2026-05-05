@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İngilizce Kelime Projesi</title>
+    <title>İngilizce Alfabetik Sözlük - Harun Sürücü</title>
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-            --accent: #4a90e2;
-            --text: #333;
+            --primary: #6366f1;
+            --secondary: #4f46e5;
+            --bg: #f3f4f6;
+            --text: #1f2937;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
             padding: 20px;
             display: flex;
@@ -24,58 +25,61 @@
         .container {
             width: 100%;
             max-width: 600px;
-            background: var(--card-bg);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             padding: 30px;
+            position: relative;
+        }
+
+        .info-box {
+            background: #eef2ff;
+            padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            border-left: 6px solid var(--primary);
         }
 
-        .header-info {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            line-height: 1.6;
+        .info-box p { margin: 8px 0; font-weight: 500; }
+        .info-box span { color: var(--secondary); font-weight: bold; }
+
+        .alphabet-header {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin: 10px 0;
+            text-transform: uppercase;
         }
 
-        .header-info div {
-            font-size: 1.1em;
-            color: var(--text);
+        /* Sayfa Geçiş Animasyonu */
+        .word-list-container {
+            min-height: 450px;
         }
 
-        .header-info b { color: var(--accent); }
-
-        h2 { text-align: center; color: var(--accent); }
-
-        /* Animasyon Alanı */
-        #word-container {
-            min-height: 400px;
-            transition: all 0.4s ease-in-out;
+        .page-animation {
+            animation: slideFade 0.6s ease-out;
         }
 
-        .fade-in {
-            animation: slideIn 0.5s forwards;
+        @keyframes slideFade {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
+        .word-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f3f4f6;
+            transition: 0.2s;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+        .word-item:hover { background: #f9fafb; border-radius: 8px; }
 
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #f0f0f0;
-        }
+        .en { font-weight: bold; color: var(--secondary); font-size: 1.1rem; }
+        .tr { color: #6b7280; font-style: italic; }
 
-        .en-word { font-weight: bold; color: var(--accent); font-size: 1.1em; }
-        .tr-word { color: #666; font-style: italic; }
-
-        .controls {
+        .nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -83,97 +87,193 @@
         }
 
         button {
-            background: var(--accent);
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
+            padding: 12px 25px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.2s;
+            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);
+            transition: 0.3s;
         }
 
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        button:hover:not(:disabled) { opacity: 0.8; }
+        button:hover:not(:disabled) { background: var(--secondary); transform: translateY(-2px); }
+        button:disabled { background: #d1d5db; box-shadow: none; cursor: not-allowed; }
+
+        .progress { font-weight: bold; color: #9ca3af; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header-info">
-        <div><b>Öğrenci:</b> Harun Sürücü</div>
-        <div><b>Numara:</b> [Buraya Numaranı Yaz]</div>
-        <div><b>Ders:</b> İngilizce</div>
-        <div><b>Öğretmen:</b> Emel Bozbay</div>
+    <div class="info-box">
+        <p>Öğrenci: <span>Harun Sürücü</span></p>
+        <p>Numara: <span>[Buraya Numaranı Yaz]</span></p>
+        <p>Ders: <span>İngilizce</span></p>
+        <p>Öğretmen: <span>Emel Bozbay</span></p>
     </div>
 
-    <h2>Kelime Listesi</h2>
-
-    <div id="word-container">
-        <table id="word-table">
-            <tbody id="word-list">
-                </tbody>
-        </table>
+    <div id="word-list-container" class="word-list-container">
+        <div class="alphabet-header" id="current-letter">A</div>
+        <div id="words" class="page-animation">
+            </div>
     </div>
 
-    <div class="controls">
+    <div class="nav">
         <button id="prevBtn" onclick="changePage(-1)">Geri</button>
-        <span id="pageInfo">Sayfa 1</span>
+        <span class="progress" id="page-info">A / Z</span>
         <button id="nextBtn" onclick="changePage(1)">İleri</button>
     </div>
 </div>
 
 <script>
-    // A'dan Z'ye sıralı örnek kelime listesi (Burayı genişletebilirsin)
-    const words = [
-        {en: "Apple", tr: "Elma"}, {en: "Ability", tr: "Yetenek"}, {en: "Account", tr: "Hesap"},
-        {en: "Active", tr: "Aktif"}, {en: "Address", tr: "Adres"}, {en: "Advice", tr: "Tavsiye"},
-        {en: "Age", tr: "Yaş"}, {en: "Agree", tr: "Anlaşmak"}, {en: "Air", tr: "Hava"}, {en: "Alone", tr: "Yalnız"},
-        {en: "Baby", tr: "Bebek"}, {en: "Back", tr: "Geri"}, {en: "Bad", tr: "Kötü"}, {en: "Ball", tr: "Top"},
-        {en: "Bank", tr: "Banka"}, {en: "Basic", tr: "Temel"}, {en: "Beach", tr: "Plaj"}, {en: "Bear", tr: "Ayı"},
-        {en: "Before", tr: "Önce"}, {en: "Best", tr: "En iyi"},
-        // ... Aradaki harfler ...
-        {en: "Young", tr: "Genç"}, {en: "Year", tr: "Yıl"}, {en: "Yellow", tr: "Sarı"}, {en: "Yes", tr: "Evet"},
-        {en: "Yesterday", tr: "Dün"}, {en: "You", tr: "Sen"}, {en: "Zero", tr: "Sıfır"}, {en: "Zone", tr: "Bölge"},
-        {en: "Zoo", tr: "Hayvanat Bahçesi"}, {en: "Zoom", tr: "Yakınlaştırmak"}
-    ];
+    // 26 Harf ve her harf için 10 kelime (Örneklerle dolduruldu)
+    const dictionary = {
+        "A": [
+            {en: "Apple", tr: "Elma"}, {en: "Ant", tr: "Karınca"}, {en: "Able", tr: "Yapabilmek"}, {en: "About", tr: "Hakkında"}, {en: "Above", tr: "Üzerinde"},
+            {en: "Across", tr: "Karşısında"}, {en: "Act", tr: "Eylem"}, {en: "Add", tr: "Eklemek"}, {en: "Afraid", tr: "Korkmuş"}, {en: "After", tr: "Sonra"}
+        ],
+        "B": [
+            {en: "Baby", tr: "Bebek"}, {en: "Back", tr: "Geri"}, {en: "Bad", tr: "Kötü"}, {en: "Ball", tr: "Top"}, {en: "Bank", tr: "Banka"},
+            {en: "Base", tr: "Temel"}, {en: "Be", tr: "Olmak"}, {en: "Bear", tr: "Ayı"}, {en: "Bed", tr: "Yatak"}, {en: "Best", tr: "En iyi"}
+        ],
+        "C": [
+            {en: "Cake", tr: "Kek"}, {en: "Call", tr: "Aramak"}, {en: "Can", tr: "Ebilmek"}, {en: "Car", tr: "Araba"}, {en: "Card", tr: "Kart"},
+            {en: "Care", tr: "Bakım"}, {en: "Case", tr: "Durum"}, {en: "Cat", tr: "Kedi"}, {en: "Chair", tr: "Sandalye"}, {en: "Chance", tr: "Şans"}
+        ],
+        "D": [
+            {en: "Dad", tr: "Baba"}, {en: "Dance", tr: "Dans"}, {en: "Dark", tr: "Karanlık"}, {en: "Day", tr: "Gün"}, {en: "Dead", tr: "Ölü"},
+            {en: "Deep", tr: "Derin"}, {en: "Desk", tr: "Sıra"}, {en: "Die", tr: "Ölmek"}, {en: "Dirty", tr: "Kirli"}, {en: "Dog", tr: "Köpek"}
+        ],
+        "E": [
+            {en: "Each", tr: "Her biri"}, {en: "Ear", tr: "Kulak"}, {en: "Early", tr: "Erken"}, {en: "East", tr: "Doğu"}, {en: "Easy", tr: "Kolay"},
+            {en: "Eat", tr: "Yemek yemek"}, {en: "Egg", tr: "Yumurta"}, {en: "End", tr: "Son"}, {en: "Eye", tr: "Göz"}, {en: "Earth", tr: "Dünya"}
+        ],
+        "F": [
+            {en: "Face", tr: "Yüz"}, {en: "Fact", tr: "Gerçek"}, {en: "Fall", tr: "Düşmek"}, {en: "Family", tr: "Aile"}, {en: "Far", tr: "Uzak"},
+            {en: "Farm", tr: "Çiftlik"}, {en: "Fast", tr: "Hızlı"}, {en: "Father", tr: "Baba"}, {en: "Fear", tr: "Korku"}, {en: "Fire", tr: "Ateş"}
+        ],
+        "G": [
+            {en: "Game", tr: "Oyun"}, {en: "Garden", tr: "Bahçe"}, {en: "Gas", tr: "Gaz"}, {en: "Gate", tr: "Kapı"}, {en: "Gift", tr: "Hediye"},
+            {en: "Girl", tr: "Kız"}, {en: "Glass", tr: "Bardak"}, {en: "Go", tr: "Gitmek"}, {en: "Gold", tr: "Altın"}, {en: "Good", tr: "İyi"}
+        ],
+        "H": [
+            {en: "Hair", tr: "Saç"}, {en: "Half", tr: "Yarım"}, {en: "Hall", tr: "Hol"}, {en: "Hand", tr: "El"}, {en: "Happy", tr: "Mutlu"},
+            {en: "Hard", tr: "Sert"}, {en: "Hat", tr: "Şapka"}, {en: "Head", tr: "Kafa"}, {en: "Hear", tr: "Duymak"}, {en: "Heart", tr: "Kalp"}
+        ],
+        "I": [
+            {en: "Ice", tr: "Buz"}, {en: "Idea", tr: "Fikir"}, {en: "If", tr: "Eğer"}, {en: "Ill", tr: "Hasta"}, {en: "In", tr: "İçinde"},
+            {en: "Inch", tr: "İnç"}, {en: "Iron", tr: "Demir"}, {en: "Island", tr: "Ada"}, {en: "Issue", tr: "Mesele"}, {en: "It", tr: "O"}
+        ],
+        "J": [
+            {en: "Job", tr: "İş"}, {en: "Join", tr: "Katılmak"}, {en: "Joke", tr: "Şaka"}, {en: "Joy", tr: "Neşe"}, {en: "Judge", tr: "Yargıç"},
+            {en: "Juice", tr: "Meyve Suyu"}, {en: "Jump", tr: "Zıplamak"}, {en: "Just", tr: "Sadece"}, {en: "July", tr: "Temmuz"}, {en: "June", tr: "Haziran"}
+        ],
+        "K": [
+            {en: "Keep", tr: "Tutmak"}, {en: "Key", tr: "Anahtar"}, {en: "Kid", tr: "Çocuk"}, {en: "Kill", tr: "Öldürmek"}, {en: "Kind", tr: "Nazik"},
+            {en: "King", tr: "Kral"}, {en: "Kiss", tr: "Öpmek"}, {en: "Kitchen", tr: "Mutfak"}, {en: "Knee", tr: "Diz"}, {en: "Knife", tr: "Bıçak"}
+        ],
+        "L": [
+            {en: "Lake", tr: "Göl"}, {en: "Lamp", tr: "Lamba"}, {en: "Land", tr: "Kara"}, {en: "Last", tr: "Son"}, {en: "Late", tr: "Geç"},
+            {en: "Laugh", tr: "Gülmek"}, {en: "Law", tr: "Hukuk"}, {en: "Lead", tr: "Liderlik etmek"}, {en: "Leaf", tr: "Yaprak"}, {en: "Left", tr: "Sol"}
+        ],
+        "M": [
+            {en: "Map", tr: "Harita"}, {en: "Mark", tr: "İşaret"}, {en: "Meal", tr: "Öğün"}, {en: "Meat", tr: "Et"}, {en: "Meet", tr: "Buluşmak"},
+            {en: "Milk", tr: "Süt"}, {en: "Mind", tr: "Zihin"}, {en: "Miss", tr: "Özlemek"}, {en: "Money", tr: "Para"}, {en: "Moon", tr: "Ay"}
+        ],
+        "N": [
+            {en: "Name", tr: "İsim"}, {en: "Near", tr: "Yakın"}, {en: "Neck", tr: "Boyun"}, {en: "Need", tr: "İhtiyaç"}, {en: "New", tr: "Yeni"},
+            {en: "Next", tr: "Sıradaki"}, {en: "Night", tr: "Gece"}, {en: "No", tr: "Hayır"}, {en: "North", tr: "Kuzey"}, {en: "Note", tr: "Not"}
+        ],
+        "O": [
+            {en: "Ocean", tr: "Okyanus"}, {en: "Of", tr: "Iyelik eki"}, {en: "Off", tr: "Kapalı"}, {en: "Oil", tr: "Yağ"}, {en: "Old", tr: "Eski"},
+            {en: "On", tr: "Üstünde"}, {en: "One", tr: "Bir"}, {en: "Open", tr: "Açık"}, {en: "Order", tr: "Düzen"}, {en: "Out", tr: "Dışarı"}
+        ],
+        "P": [
+            {en: "Page", tr: "Sayfa"}, {en: "Pain", tr: "Acı"}, {en: "Paint", tr: "Boyamak"}, {en: "Paper", tr: "Kağıt"}, {en: "Park", tr: "Park"},
+            {en: "Part", tr: "Parça"}, {en: "Past", tr: "Geçmiş"}, {en: "Pay", tr: "Ödemek"}, {en: "Pen", tr: "Kalem"}, {en: "Person", tr: "Kişi"}
+        ],
+        "Q": [
+            {en: "Queen", tr: "Kraliçe"}, {en: "Quick", tr: "Hızlı"}, {en: "Quiet", tr: "Sessiz"}, {en: "Quit", tr: "Çıkmak"}, {en: "Question", tr: "Soru"},
+            {en: "Quarter", tr: "Çeyrek"}, {en: "Quality", tr: "Kalite"}, {en: "Queue", tr: "Kuyruk"}, {en: "Quite", tr: "Oldukça"}, {en: "Quake", tr: "Sarsıntı"}
+        ],
+        "R": [
+            {en: "Rain", tr: "Yağmur"}, {en: "Read", tr: "Okumak"}, {en: "Red", tr: "Kırmızı"}, {en: "Rest", tr: "Dinlenmek"}, {en: "Rich", tr: "Zengin"},
+            {en: "Ride", tr: "Binmek"}, {en: "Right", tr: "Doğru"}, {en: "Ring", tr: "Yüzük"}, {en: "River", tr: "Nehir"}, {en: "Road", tr: "Yol"}
+        ],
+        "S": [
+            {en: "Sad", tr: "Üzgün"}, {en: "Safe", tr: "Güvenli"}, {en: "Salt", tr: "Tuz"}, {en: "Same", tr: "Aynı"}, {en: "Sea", tr: "Deniz"},
+            {en: "Seat", tr: "Koltuk"}, {en: "See", tr: "Görmek"}, {en: "Send", tr: "Göndermek"}, {en: "Seven", tr: "Yedi"}, {en: "Ship", tr: "Gemi"}
+        ],
+        "T": [
+            {en: "Table", tr: "Masa"}, {en: "Take", tr: "Almak"}, {en: "Tall", tr: "Uzun"}, {en: "Tea", tr: "Çay"}, {en: "Team", tr: "Takım"},
+            {en: "Tell", tr: "Anlatmak"}, {en: "Ten", tr: "On"}, {en: "Test", tr: "Test"}, {en: "Thin", tr: "İnce"}, {en: "Time", tr: "Zaman"}
+        ],
+        "U": [
+            {en: "Under", tr: "Altında"}, {en: "Unit", tr: "Birim"}, {en: "Until", tr: "Kadar"}, {en: "Up", tr: "Yukarı"}, {en: "Use", tr: "Kullanmak"},
+            {en: "Ugly", tr: "Çirkin"}, {en: "Uncle", tr: "Amca"}, {en: "Urban", tr: "Kentsel"}, {en: "Us", tr: "Bize"}, {en: "User", tr: "Kullanıcı"}
+        ],
+        "V": [
+            {en: "Valley", tr: "Vadi"}, {en: "Value", tr: "Değer"}, {en: "View", tr: "Görünüm"}, {en: "Visit", tr: "Ziyaret"}, {en: "Voice", tr: "Ses"},
+            {en: "Vast", tr: "Geniş"}, {en: "Verse", tr: "Dize"}, {en: "Very", tr: "Çok"}, {en: "Vessel", tr: "Gemi"}, {en: "Video", tr: "Video"}
+        ],
+        "W": [
+            {en: "Wait", tr: "Beklemek"}, {en: "Walk", tr: "Yürümek"}, {en: "Wall", tr: "Duvar"}, {en: "War", tr: "Savaş"}, {en: "Warm", tr: "Sıcak"},
+            {en: "Watch", tr: "İzlemek"}, {en: "Water", tr: "Su"}, {en: "Way", tr: "Yol"}, {en: "Week", tr: "Hafta"}, {en: "Well", tr: "İyi"}
+        ],
+        "X": [
+            {en: "Xylophone", tr: "Ksilofon"}, {en: "X-ray", tr: "Röntgen"}, {en: "Xenon", tr: "Ksenon"}, {en: "Xerox", tr: "Fotokopi"}, {en: "Xeric", tr: "Kurak"},
+            {en: "X-axis", tr: "X-ekseni"}, {en: "X-large", tr: "Çok büyük"}, {en: "X-factor", tr: "X-faktörü"}, {en: "Xmas", tr: "Noel"}, {en: "Xylitol", tr: "Ksilitol"}
+        ],
+        "Y": [
+            {en: "Yard", tr: "Bahçe"}, {en: "Year", tr: "Yıl"}, {en: "Yellow", tr: "Sarı"}, {en: "Yes", tr: "Evet"}, {en: "You", tr: "Sen"},
+            {en: "Young", tr: "Genç"}, {en: "Your", tr: "Senin"}, {en: "Youth", tr: "Gençlik"}, {en: "Yawn", tr: "Esnemek"}, {en: "Yield", tr: "Verim"}
+        ],
+        "Z": [
+            {en: "Zero", tr: "Sıfır"}, {en: "Zone", tr: "Bölge"}, {en: "Zoo", tr: "Hayvanat Bahçesi"}, {en: "Zoom", tr: "Yakınlaştırmak"}, {en: "Zest", tr: "Heves"},
+            {en: "Zebra", tr: "Zebra"}, {en: "Zigzag", tr: "Zigzag"}, {en: "Zinc", tr: "Çinko"}, {en: "Zip", tr: "Fermuar"}, {en: "Zodiac", tr: "Zodyak"}
+        ]
+    };
 
-    let currentPage = 1;
-    const wordsPerPage = 10;
+    const alphabet = Object.keys(dictionary);
+    let currentIdx = 0;
 
-    function renderWords() {
-        const list = document.getElementById('word-list');
-        const container = document.getElementById('word-container');
-        
-        // Animasyonu tetikle
-        container.classList.remove('fade-in');
-        void container.offsetWidth; // Reflow
-        container.classList.add('fade-in');
+    function display() {
+        const letter = alphabet[currentIdx];
+        const wordsDiv = document.getElementById('words');
+        const letterHeader = document.getElementById('current-letter');
+        const pageInfo = document.getElementById('page-info');
 
-        list.innerHTML = "";
-        
-        const start = (currentPage - 1) * wordsPerPage;
-        const end = start + wordsPerPage;
-        const currentWords = words.slice(start, end);
+        // Animasyonu resetle
+        wordsDiv.classList.remove('page-animation');
+        void wordsDiv.offsetWidth; 
+        wordsDiv.classList.add('page-animation');
 
-        currentWords.forEach(w => {
-            list.innerHTML += `<tr><td class="en-word">${w.en}</td><td class="tr-word">${w.tr}</td></tr>`;
+        letterHeader.innerText = letter;
+        wordsDiv.innerHTML = "";
+
+        dictionary[letter].forEach(item => {
+            wordsDiv.innerHTML += `
+                <div class="word-item">
+                    <span class="en">${item.en}</span>
+                    <span class="tr">${item.tr}</span>
+                </div>`;
         });
 
-        document.getElementById('pageInfo').innerText = `Sayfa ${currentPage} / ${Math.ceil(words.length / wordsPerPage)}`;
-        document.getElementById('prevBtn').disabled = currentPage === 1;
-        document.getElementById('nextBtn').disabled = end >= words.length;
+        pageInfo.innerText = `${letter} / Z`;
+        document.getElementById('prevBtn').disabled = (currentIdx === 0);
+        document.getElementById('nextBtn').disabled = (currentIdx === alphabet.length - 1);
     }
 
-    function changePage(step) {
-        currentPage += step;
-        renderWords();
-        window.scrollTo(0, 0); // Sayfa değişince başa sarar
+    function changePage(dir) {
+        currentIdx += dir;
+        display();
+        window.scrollTo(0, 0);
     }
 
-    renderWords();
+    display();
 </script>
 
 </body>
 </html>
-
